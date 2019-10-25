@@ -34,19 +34,23 @@
         this.array = [...tmpArr];
       },
       bubbleSort() {
+        console.log(document);
+
         let isSorted = false;
         let index = this.array.length - 1;
 
         while(!isSorted) {
           isSorted = true;
           for (let i = 0; i < index; i++) {
-            if (this.array[i] > this.array[i + 1]) {
-              isSorted = false;
-              let tmp = this.array[i];
-              this.array[i] = this.array[i + 1];
-              this.array[i + 1] = tmp;
-              this.array = [...this.array];
-            }
+            isSorted = false;
+            setTimeout(() => {
+              if (this.array[i] > this.array[i + 1]) {
+                let tmp = this.array[i];
+                this.array[i] = this.array[i + 1];
+                this.array[i + 1] = tmp;
+                this.array = [...this.array];
+              }
+            }, 100)
           }
 
           index--;
