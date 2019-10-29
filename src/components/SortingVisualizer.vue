@@ -3,6 +3,7 @@
     <div class="buttons-placeholder">
       <button @click="resetArray">Reset</button>
       <button @click="bubbleSort">Run Bubble Sort</button>
+      <button @click="heapSort">Run Heap Sort</button>
     </div>
     <div class="bar-container">
       <div class="bar"
@@ -17,6 +18,7 @@
 
 <script>
   import BubbleSort from "../services/BubbleSort";
+  import HeapSort from "../services/HeapSort";
 
   const MAIN_BG_COLOR = 'chartreuse';
   const SECONDARY_BG_COLOR = 'red';
@@ -61,6 +63,24 @@
           }, data.counter / 10)
         });
         BubbleSort.run(this.array);
+      },
+      heapSort() {
+        let counter = 10;
+        HeapSort.$on('onValueSwap', (data) => {
+          counter += 20;
+          setTimeout(() => {
+            this.changeBarColor(SECONDARY_BG_COLOR, data.second.index);
+            this.changeBarColor(SECONDARY_BG_COLOR, data.first.index);
+            this.array[data.first.index] = data.first.value;
+            this.array[data.second.index] = data.second.value;
+            setTimeout(() => {
+              this.changeBarColor(MAIN_BG_COLOR, data.second.index);
+              this.changeBarColor(MAIN_BG_COLOR, data.first.index);
+            }, 20);
+            this.array = [...this.array];
+          }, counter * 2)
+        });
+        HeapSort.run(this.array);
       }
     },
     beforeMount() {
