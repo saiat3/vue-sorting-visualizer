@@ -16,4 +16,7 @@ export default {
 </script>
 
 <style>
+  #app {
+    overflow: overlay;
+  }
 </style>

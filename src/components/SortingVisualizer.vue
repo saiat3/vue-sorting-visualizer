@@ -2,8 +2,31 @@
   <div class="sort-visualizer">
     <div class="buttons-placeholder">
       <button class="btn" :disabled="isSorting" @click="resetArray">Reset</button>
-      <button class="btn" :disabled="isSorting" @click="bubbleSort">Run Bubble Sort</button>
-      <button class="btn" :disabled="isSorting" @click="heapSort">Run Heap Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="bubbleSort">Run Bubble Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="heapSort">Run Heap Sort</button>
+
+      <div class="status-placeholder">
+        <table>
+          <tr>
+            <td>
+              Processing
+            </td>
+            <td :class="{'processing': isSorting, 'not-processing': !isSorting}">
+              {{isSorting ? 'Yes' : 'No'}}
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td>State</td>
+            <td :class="{'sorted': isSorted, 'unsorted': !isSorted}">
+              {{isSorted ? 'Sorted' : 'Unsorted'}}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="clear: both"></div>
     </div>
     <div class="bar-container">
       <div class="bar"
@@ -21,14 +44,15 @@
   import HeapSort from "../services/HeapSort";
 
   const MAIN_BG_COLOR = 'chartreuse';
-  const SECONDARY_BG_COLOR = 'red';
+  const SECONDARY_BG_COLOR = '#e2201d';
 
   export default {
     name: 'SortingVisualizer',
     data() {
       return {
         array: [],
-        isSorting: false
+        isSorting: false,
+        isSorted: false
       }
     },
     methods: {
@@ -38,6 +62,7 @@
           tmpArr.push(this.randomIntFromInterval(5, 1000));
         }
         this.array = [...tmpArr];
+        this.isSorted = false;
       },
       randomIntFromInterval(max, min) {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -51,18 +76,34 @@
         })
       },
       bubbleSort() {
+        this.isSorting = true;
+        let maxCounter = 0;
+
         BubbleSort.$on('onItemSwap', (data) => {
+          // Save max counter to afterwards enable input fields
+          if (data.counter > maxCounter) {
+            maxCounter = data.counter;
+          }
+
           setTimeout(() => {
             this.resetBackgroundColors();
             this.changeBarColor(SECONDARY_BG_COLOR, data.second.index);
             this.array[data.first.index] = data.first.value;
             this.array[data.second.index] = data.second.value;
             this.array = [...this.array];
+
             setTimeout(() => {
               this.resetBackgroundColors();
             }, 5);
-          }, data.counter / 10)
+
+            if (data.counter === maxCounter) {
+              this.isSorting = false;
+              this.isSorted = true;
+            }
+
+          }, data.counter);
         });
+
         BubbleSort.run(this.array);
       },
       heapSort() {
@@ -85,6 +126,7 @@
 
             if (data.isLast) {
               this.isSorting = false;
+              this.isSorted = true;
             }
           }, counter * 2)
         });
@@ -100,9 +142,11 @@
 <style lang="scss" scoped>
 
   .sort-visualizer {
+    width: 1500px;
+    margin: 0 auto;
+
     .buttons-placeholder {
       margin: auto;
-      width: 1500px;
       padding-bottom: 20px;
       padding-top: 10px;
       border-bottom: 1px solid #cecece;
@@ -123,6 +167,7 @@
 
         &[disabled] {
           background-color: #ebebeb;
+
           &:hover {
             color: rgb(128, 128, 128);
             border: 1px solid #cecece;
@@ -132,11 +177,46 @@
       }
     }
 
+    .status-placeholder {
+      display: inline-block;
+      font-size: 20px;
+      float: right;
+
+      table {
+        border-collapse: collapse;
+        display: inline-block;
+
+        &:first-child {
+          margin-right: 10px;
+        }
+
+        td {
+          font-weight: 500;
+          width: 100px;
+
+          &:first-child {
+            font-weight: 800;
+          }
+
+          &.unsorted, &.not-processing {
+            background-color: #e2201d;
+            color: #ffffff;
+          }
+
+          &.sorted, &.processing {
+            background-color: chartreuse;
+          }
+
+          padding: 5px 10px;
+          border: 1px solid #cecece;
+        }
+      }
+    }
+
     .bar-container {
       margin: auto;
       margin-top: 60px;
       border-bottom: 1px solid #cecece;
-      width: 1500px;
       text-align: center;
 
       .bar {

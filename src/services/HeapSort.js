@@ -3,37 +3,36 @@ import Vue from "vue";
 export default new Vue({
   methods: {
     run(arr) {
-      this.heapSort(arr);
+      this.heapSort([...arr]);
     },
     heapSort(arr) {
-      let array = [...arr];
 
-      this.buildMaxHeap(array);
-      let end = array.length - 1;
+      this.buildMaxHeap(arr);
+      let end = arr.length - 1;
 
       while (end > 0) {
 
-        let temp = array[end];
-        array[end] = array[0];
-        array[0] = temp;
+        let temp = arr[end];
+        arr[end] = arr[0];
+        arr[0] = temp;
 
         this.$emit('onValueSwap', {
           first: {
             index: 0,
-            value: array[0]
+            value: arr[0]
           },
           second: {
             index: end,
-            value: array[end]
+            value: arr[end]
           },
           isLast: end === 1
         });
 
-        this.siftDown(array, 0, end);
+        this.siftDown(arr, 0, end);
         end--;
       }
 
-      return array;
+      return arr;
     },
     buildMaxHeap(arr) {
       let currentIndex = Math.floor(arr.length / 2);
