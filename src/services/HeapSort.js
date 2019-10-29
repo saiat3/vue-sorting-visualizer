@@ -25,7 +25,8 @@ export default new Vue({
           second: {
             index: end,
             value: array[end]
-          }
+          },
+          isLast: end === 1
         });
 
         this.siftDown(array, 0, end);

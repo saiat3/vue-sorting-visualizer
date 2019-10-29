@@ -1,9 +1,9 @@
 <template>
   <div class="sort-visualizer">
     <div class="buttons-placeholder">
-      <button @click="resetArray">Reset</button>
-      <button @click="bubbleSort">Run Bubble Sort</button>
-      <button @click="heapSort">Run Heap Sort</button>
+      <button class="btn" :disabled="isSorting" @click="resetArray">Reset</button>
+      <button class="btn" :disabled="isSorting" @click="bubbleSort">Run Bubble Sort</button>
+      <button class="btn" :disabled="isSorting" @click="heapSort">Run Heap Sort</button>
     </div>
     <div class="bar-container">
       <div class="bar"
@@ -27,7 +27,8 @@
     name: 'SortingVisualizer',
     data() {
       return {
-        array: []
+        array: [],
+        isSorting: false
       }
     },
     methods: {
@@ -59,25 +60,32 @@
             this.array = [...this.array];
             setTimeout(() => {
               this.resetBackgroundColors();
-            }, 5)
+            }, 5);
           }, data.counter / 10)
         });
         BubbleSort.run(this.array);
       },
       heapSort() {
+        this.isSorting = true;
         let counter = 10;
         HeapSort.$on('onValueSwap', (data) => {
           counter += 20;
           setTimeout(() => {
             this.changeBarColor(SECONDARY_BG_COLOR, data.second.index);
             this.changeBarColor(SECONDARY_BG_COLOR, data.first.index);
+
             this.array[data.first.index] = data.first.value;
             this.array[data.second.index] = data.second.value;
+            this.array = [...this.array];
+
             setTimeout(() => {
               this.changeBarColor(MAIN_BG_COLOR, data.second.index);
               this.changeBarColor(MAIN_BG_COLOR, data.first.index);
             }, 20);
-            this.array = [...this.array];
+
+            if (data.isLast) {
+              this.isSorting = false;
+            }
           }, counter * 2)
         });
         HeapSort.run(this.array);
@@ -99,11 +107,27 @@
       padding-top: 10px;
       border-bottom: 1px solid #cecece;
 
-      button {
+      .btn {
+        outline: none;
+        background: none;
+        border: 1px solid #cecece;
+        padding: 10px 20px;
         margin-right: 10px;
 
         &:hover {
           cursor: pointer;
+          color: white;
+          border: 1px solid #59ce79;
+          background-color: #59ce79;
+        }
+
+        &[disabled] {
+          background-color: #ebebeb;
+          &:hover {
+            color: rgb(128, 128, 128);
+            border: 1px solid #cecece;
+            cursor: not-allowed;
+          }
         }
       }
     }
