@@ -83,47 +83,47 @@
       },
       bubbleSort() {
         this.isSorting = true;
-        let maxCounter = 0;
+        let counter = 0;
+        let time = 0;
 
         BubbleSort.$on('onItemSwap', (data) => {
-          // Save max counter to afterwards enable input fields
-          if (data.counter > maxCounter) {
-            maxCounter = data.counter;
-          }
+          counter++;
+          time += 5;
 
           setTimeout(() => {
             this.resetBackgroundColors();
-            this.changeBarColor(SECONDARY_BG_COLOR, data.second.index);
-            this.array[data.first.index] = data.first.value;
-            this.array[data.second.index] = data.second.value;
-            this.array = [...this.array];
+            this.changeBarColor(SECONDARY_BG_COLOR, data.right);
 
             setTimeout(() => {
               this.resetBackgroundColors();
-            }, 5);
+            }, time);
 
-            if (data.counter === maxCounter) {
+            this.array = [...data.arr];
+
+            if (data.counter === counter) {
               this.isSorting = false;
               this.isSorted = true;
             }
-
-          }, data.counter);
+          }, time);
         });
 
         BubbleSort.run(this.array);
       },
       heapSort() {
         this.isSorting = true;
-        let counter = 10;
+        let time = 10;
         HeapSort.$on('onValueSwap', (data) => {
-          counter += 100;
+          time += 100;
           setTimeout(() => {
             this.changeBarColor(SECONDARY_BG_COLOR, data.left);
             this.changeBarColor(EXTRA_BG_COLOR, data.right);
+
             setTimeout(() => {
               this.changeBarColor(MAIN_BG_COLOR, data.right);
             }, 100);
+
             this.array = [...data.arr];
+
             if (data.isLast) {
               setTimeout(() => {
                 this.changeBarColor(MAIN_BG_COLOR, data.left);
@@ -131,7 +131,7 @@
                 this.isSorted = true;
               }, 100);
             }
-          }, counter);
+          }, time);
         });
         HeapSort.run(this.array);
       },
@@ -151,6 +151,8 @@
               this.changeBarColor(MAIN_BG_COLOR, data.right);
             }, 50);
 
+            this.array = [...data.arr];
+
             if (data.counter === counter) {
               setTimeout(() => {
                 this.changeBarColor(MAIN_BG_COLOR, data.left);
@@ -159,8 +161,6 @@
                 this.isSorted = true;
               }, 100);
             }
-
-            this.array = [...data.arr];
           }, time);
         });
         QuickSort.run(this.array);
