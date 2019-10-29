@@ -17,15 +17,10 @@ export default new Vue({
         arr[0] = temp;
 
         this.$emit('onValueSwap', {
-          first: {
-            index: 0,
-            value: arr[0]
-          },
-          second: {
-            index: end,
-            value: arr[end]
-          },
-          isLast: end === 1
+          arr: [...arr],
+          left: 0,
+          right: end,
+          isLast: end === 1,
         });
 
         this.siftDown(arr, 0, end);

@@ -4,6 +4,7 @@
       <button class="btn" :disabled="isSorting" @click="resetArray">Reset</button>
       <button class="btn" :disabled="isSorting || isSorted" @click="bubbleSort">Run Bubble Sort</button>
       <button class="btn" :disabled="isSorting || isSorted" @click="heapSort">Run Heap Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="quickSort">Run Quick Sort</button>
 
       <div class="status-placeholder">
         <table>
@@ -42,9 +43,11 @@
 <script>
   import BubbleSort from "../services/BubbleSort";
   import HeapSort from "../services/HeapSort";
+  import QuickSort from "../services/QuickSort";
 
   const MAIN_BG_COLOR = 'chartreuse';
   const SECONDARY_BG_COLOR = '#e2201d';
+  const EXTRA_BG_COLOR = '#a619e2';
 
   export default {
     name: 'SortingVisualizer',
@@ -58,7 +61,7 @@
     methods: {
       resetArray() {
         const tmpArr = [];
-        for (let i = 0; i < 250; i++) {
+        for (let i = 0; i < 70; i++) {
           tmpArr.push(this.randomIntFromInterval(5, 1000));
         }
         this.array = [...tmpArr];
@@ -68,7 +71,10 @@
         return Math.floor(Math.random() * (max - min + 1) + min);
       },
       changeBarColor(color, index) {
-        document.getElementById(`bar-${index}`).style.backgroundColor = color;
+        let tmp = document.getElementById(`bar-${index}`);
+        if (tmp) {
+          tmp.style.backgroundColor = color;
+        }
       },
       resetBackgroundColors() {
         document.querySelector('.bar-container').children.forEach((child) => {
@@ -110,27 +116,54 @@
         this.isSorting = true;
         let counter = 10;
         HeapSort.$on('onValueSwap', (data) => {
-          counter += 20;
+          counter += 100;
           setTimeout(() => {
-            this.changeBarColor(SECONDARY_BG_COLOR, data.second.index);
-            this.changeBarColor(SECONDARY_BG_COLOR, data.first.index);
-
-            this.array[data.first.index] = data.first.value;
-            this.array[data.second.index] = data.second.value;
-            this.array = [...this.array];
-
+            this.changeBarColor(SECONDARY_BG_COLOR, data.left);
+            this.changeBarColor(EXTRA_BG_COLOR, data.right);
             setTimeout(() => {
-              this.changeBarColor(MAIN_BG_COLOR, data.second.index);
-              this.changeBarColor(MAIN_BG_COLOR, data.first.index);
-            }, 20);
-
+              this.changeBarColor(MAIN_BG_COLOR, data.right);
+            }, 100);
+            this.array = [...data.arr];
             if (data.isLast) {
-              this.isSorting = false;
-              this.isSorted = true;
+              setTimeout(() => {
+                this.changeBarColor(MAIN_BG_COLOR, data.left);
+                this.isSorting = false;
+                this.isSorted = true;
+              }, 100);
             }
-          }, counter * 2)
+          }, counter);
         });
         HeapSort.run(this.array);
+      },
+      quickSort() {
+        this.isSorting = true;
+        let time = 0;
+        let counter = 0;
+        QuickSort.$on('onValueSwap', (data) => {
+          counter++;
+          time += 100;
+          setTimeout(() => {
+            this.changeBarColor(SECONDARY_BG_COLOR, data.left);
+            this.changeBarColor(EXTRA_BG_COLOR, data.right);
+
+            setTimeout(() => {
+              this.changeBarColor(MAIN_BG_COLOR, data.left);
+              this.changeBarColor(MAIN_BG_COLOR, data.right);
+            }, 50);
+
+            if (data.counter === counter) {
+              setTimeout(() => {
+                this.changeBarColor(MAIN_BG_COLOR, data.left);
+                this.changeBarColor(MAIN_BG_COLOR, data.right);
+                this.isSorting = false;
+                this.isSorted = true;
+              }, 100);
+            }
+
+            this.array = [...data.arr];
+          }, time);
+        });
+        QuickSort.run(this.array);
       }
     },
     beforeMount() {
@@ -142,7 +175,7 @@
 <style lang="scss" scoped>
 
   .sort-visualizer {
-    width: 1500px;
+    width: 1200px;
     margin: 0 auto;
 
     .buttons-placeholder {
@@ -220,9 +253,9 @@
       text-align: center;
 
       .bar {
-        margin-right: 2px;
+        margin-right: 4px;
         font-size: 0;
-        width: 4px;
+        width: 13px;
         height: 2px;
         display: inline-block;
         background-color: chartreuse;
