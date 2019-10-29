@@ -1,8 +1,14 @@
 import Vue from "vue";
 
 export default new Vue({
+  data() {
+    return {
+      counter: 0
+    }
+  },
   methods: {
     run(arr) {
+      this.counter = 0;
       this.quickSort(arr, 0, arr.length - 1)
     },
     quickSort(arr, left, right) {
@@ -40,8 +46,10 @@ export default new Vue({
           left++;
           right--;
 
+          this.counter++;
           this.$emit('onValueSwap', {
             arr: [...arr],
+            counter: this.counter,
             left,
             right
           });
