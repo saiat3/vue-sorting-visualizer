@@ -2,9 +2,9 @@
   <div class="sort-visualizer">
     <div class="buttons-placeholder">
       <button class="btn" :disabled="isSorting" @click="resetArray">Reset</button>
-      <button class="btn" :disabled="isSorting || isSorted" @click="bubbleSort">Run Bubble Sort</button>
-      <button class="btn" :disabled="isSorting || isSorted" @click="heapSort">Run Heap Sort</button>
-      <button class="btn" :disabled="isSorting || isSorted" @click="quickSort">Run Quick Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="bubbleSort">Bubble Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="heapSort">Heap Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="quickSort">Quick Sort</button>
 
       <div class="status-placeholder">
         <table>
