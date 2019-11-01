@@ -5,6 +5,7 @@
       <button class="btn" :disabled="isSorting || isSorted" @click="bubbleSort">Bubble Sort</button>
       <button class="btn" :disabled="isSorting || isSorted" @click="heapSort">Heap Sort</button>
       <button class="btn" :disabled="isSorting || isSorted" @click="quickSort">Quick Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="mergeSort">Merge Sort</button>
 
       <div class="status-placeholder">
         <table>
@@ -44,6 +45,7 @@
   import BubbleSort from "../services/BubbleSort";
   import HeapSort from "../services/HeapSort";
   import QuickSort from "../services/QuickSort";
+  import MergeSort from "../services/MergeSort";
 
   const MAIN_BG_COLOR = 'chartreuse';
   const SECONDARY_BG_COLOR = '#e2201d';
@@ -164,6 +166,9 @@
           }, time);
         });
         QuickSort.run(this.array);
+      },
+      mergeSort() {
+        MergeSort.run([]);
       }
     },
     beforeMount() {
