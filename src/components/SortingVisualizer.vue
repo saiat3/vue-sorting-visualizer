@@ -168,7 +168,7 @@
         QuickSort.run(this.array);
       },
       mergeSort() {
-        MergeSort.run([]);
+        this.array = [...MergeSort.run(this.array)];
       }
     },
     beforeMount() {
