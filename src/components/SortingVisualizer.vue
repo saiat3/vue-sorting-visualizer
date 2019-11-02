@@ -6,6 +6,7 @@
       <button class="btn" :disabled="isSorting || isSorted" @click="heapSort">Heap Sort</button>
       <button class="btn" :disabled="isSorting || isSorted" @click="quickSort">Quick Sort</button>
       <button class="btn" :disabled="isSorting || isSorted" @click="mergeSort">Merge Sort</button>
+      <button class="btn" :disabled="isSorting || isSorted" @click="selectionSort">Selection Sort</button>
 
       <div class="status-placeholder">
         <table>
@@ -46,6 +47,7 @@
   import HeapSort from "../services/HeapSort";
   import QuickSort from "../services/QuickSort";
   import MergeSort from "../services/MergeSort";
+  import SelectionSort from "../services/SelectionSort";
 
   const MAIN_BG_COLOR = 'chartreuse';
   const SECONDARY_BG_COLOR = '#e2201d';
@@ -169,6 +171,31 @@
       },
       mergeSort() {
         this.array = [...MergeSort.run(this.array)];
+      },
+      selectionSort() {
+        this.isSorting = true;
+
+        SelectionSort.$on('onSortFinish', (data) => {
+          setTimeout(() => {
+            this.isSorting = false;
+            this.isSorted = true;
+          }, data.counter * 200);
+        });
+
+        SelectionSort.$on('onValueSwap', (data) => {
+          setTimeout(() => {
+            this.array[data.left.index] = data.left.value;
+            this.changeBarColor(SECONDARY_BG_COLOR, data.left.index);
+            this.array[data.right.index] = data.right.value;
+            this.changeBarColor(EXTRA_BG_COLOR, data.right.index);
+            setTimeout(() => {
+              this.resetBackgroundColors();
+            }, 180);
+            this.array = [...this.array];
+          }, data.counter * 200);
+        });
+
+        SelectionSort.run(this.array);
       }
     },
     beforeMount() {
